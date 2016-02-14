@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+cd $BUILD_DIR
+mkdir -p .heroku
+
+# Restore cache
+if [ -d $CACHE_DIR/.heroku/bower ]; then
+  cp -R $CACHE_DIR/.heroku/bower .heroku/ &> /dev/null || true
+else
+  mkdir -p .heroku/bower
+fi
+
+bower install --config.storage.packages=.heroku/bower/packages --config.storage.registry=.heroku/bower/registry --config.tmp=.heroku/bower/tmp
+
+# Save cache
+if [ -d $CACHE_DIR/.heroku/bower ]; then
+  rm -rf $CACHE_DIR/.heroku/bower
+fi
+
+mkdir -p $CACHE_DIR/.heroku
+cp -R .heroku/bower $CACHE_DIR/.heroku/
